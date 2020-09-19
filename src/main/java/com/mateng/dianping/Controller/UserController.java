@@ -1,6 +1,10 @@
 package com.mateng.dianping.Controller;
 
 import com.mateng.dianping.Service.UserService;
+import com.mateng.dianping.common.BusinessException;
+import com.mateng.dianping.common.CommonError;
+import com.mateng.dianping.common.CommonRes;
+import com.mateng.dianping.common.EmBusinessError;
 import com.mateng.dianping.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +34,15 @@ public class UserController {
 
     @RequestMapping("/get")
     @ResponseBody
-    public UserModel getUser(@RequestParam(name="id") Integer id){
-        return userService.getUser(id);
+    public CommonRes getUser(@RequestParam(name="id") Integer id) throws BusinessException {
+        UserModel userModel = userService.getUser(id);
+
+        if (userModel == null){
+            //return CommonRes.create(new CommonError(EmBusinessError.NO_OBJECT_FOUND),"fail");
+            throw new BusinessException(EmBusinessError.NO_OBJECT_FOUND);
+        }else {
+            return CommonRes.create(userModel);
+        }
+
     }
 }
