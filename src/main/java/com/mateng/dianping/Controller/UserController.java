@@ -1,17 +1,23 @@
 package com.mateng.dianping.Controller;
 
 import com.mateng.dianping.Service.UserService;
-import com.mateng.dianping.common.BusinessException;
-import com.mateng.dianping.common.CommonError;
-import com.mateng.dianping.common.CommonRes;
-import com.mateng.dianping.common.EmBusinessError;
+import com.mateng.dianping.common.*;
 import com.mateng.dianping.model.UserModel;
+import com.mateng.dianping.request.LoginReq;
+import com.mateng.dianping.request.RegisterReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @ClassName: dianping
@@ -20,9 +26,14 @@ import org.springframework.web.servlet.ModelAndView;
  * @Date: 2020-09-12 18:21
  * @Version 1.0
  **/
-@Controller("/user")
+@Controller
 @RequestMapping("/user")
 public class UserController {
+
+    public static final String CURRENT_USER_SESSION = "currentUserSession";
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @Autowired
     private UserService userService;
@@ -55,5 +66,47 @@ public class UserController {
 
     }
 
+    @RequestMapping("/register")
+    @ResponseBody
+    public CommonRes register(@Valid @RequestBody RegisterReq registerReq, BindingResult bindingResult) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        if (bindingResult.hasErrors()){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, CommonUtil.processErrorString(bindingResult));
+        }
+        UserModel registerModel = new UserModel();
+        registerModel.setPassword(registerReq.getPassword());
+        registerModel.setTelphone(registerReq.getTelephone());
+        registerModel.setNickName(registerReq.getNickName());
+        registerModel.setGender(registerReq.getGender());
 
+        UserModel userModel = userService.register(registerModel);
+
+        return CommonRes.create(userModel);
+    }
+
+    @RequestMapping("login")
+    @ResponseBody
+    public CommonRes login(@RequestBody @Valid LoginReq loginReq,BindingResult bindingResult) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        if (bindingResult.hasErrors()){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,CommonUtil.processErrorString(bindingResult));
+        }
+        UserModel userModel = userService.login(loginReq.getTelephone(),loginReq.getPassword());
+        httpServletRequest.getSession().setAttribute(CURRENT_USER_SESSION,userModel);
+
+        return CommonRes.create(userModel);
+    }
+
+    @RequestMapping("logout")
+    @ResponseBody
+    public CommonRes logout(@RequestBody @Valid LoginReq loginReq,BindingResult bindingResult) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        httpServletRequest.getSession().invalidate();
+        return CommonRes.create(null);
+    }
+
+    //获取当前用户信息
+    @RequestMapping("getCurrentUser")
+    @ResponseBody
+    public CommonRes getCurrentUser(){
+        UserModel userModel = (UserModel) httpServletRequest.getSession().getAttribute(CURRENT_USER_SESSION);
+        return CommonRes.create(userModel);
+    }
 }

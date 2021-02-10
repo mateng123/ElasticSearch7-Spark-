@@ -1,6 +1,10 @@
 package com.mateng.dianping.Service;
 
+import com.mateng.dianping.common.BusinessException;
 import com.mateng.dianping.model.UserModel;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @ClassName: dianping
@@ -12,4 +16,8 @@ import com.mateng.dianping.model.UserModel;
 public interface UserService {
 
     UserModel getUser(Integer id);
+
+    UserModel register(UserModel registerUser) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException;
+
+    UserModel login(String telphone,String password) throws UnsupportedEncodingException, NoSuchAlgorithmException, BusinessException;
 }
