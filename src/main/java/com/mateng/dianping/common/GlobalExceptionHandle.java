@@ -32,7 +32,7 @@ public class GlobalExceptionHandle {
             CommonError commonError = new CommonError(EmBusinessError.BIND_EXCEPTION_ERROR);
             return CommonRes.create(commonError,"fail");
         }  else {
-            CommonError commonError = new CommonError(EmBusinessError.UNKNOWN_ERROR);
+             CommonError commonError = new CommonError(EmBusinessError.UNKNOWN_ERROR);
             return CommonRes.create(commonError,"fail");
         }
     }

@@ -83,27 +83,27 @@ public class UserController {
         return CommonRes.create(userModel);
     }
 
-    @RequestMapping("login")
+    @RequestMapping("/login")
     @ResponseBody
     public CommonRes login(@RequestBody @Valid LoginReq loginReq,BindingResult bindingResult) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         if (bindingResult.hasErrors()){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,CommonUtil.processErrorString(bindingResult));
         }
-        UserModel userModel = userService.login(loginReq.getTelephone(),loginReq.getPassword());
+        UserModel userModel = userService.login(loginReq.getTelphone(),loginReq.getPassword());
         httpServletRequest.getSession().setAttribute(CURRENT_USER_SESSION,userModel);
 
         return CommonRes.create(userModel);
     }
 
-    @RequestMapping("logout")
+    @RequestMapping("/logout")
     @ResponseBody
-    public CommonRes logout(@RequestBody @Valid LoginReq loginReq,BindingResult bindingResult) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+    public CommonRes logout(){
         httpServletRequest.getSession().invalidate();
         return CommonRes.create(null);
     }
 
     //获取当前用户信息
-    @RequestMapping("getCurrentUser")
+    @RequestMapping("/getcurrentuser")
     @ResponseBody
     public CommonRes getCurrentUser(){
         UserModel userModel = (UserModel) httpServletRequest.getSession().getAttribute(CURRENT_USER_SESSION);
