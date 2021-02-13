@@ -1,5 +1,6 @@
 package com.mateng.dianping.Controller.admin;
 
+import com.mateng.dianping.Service.UserService;
 import com.mateng.dianping.common.AdminPremission;
 import com.mateng.dianping.common.BusinessException;
 import com.mateng.dianping.common.CommonRes;
@@ -36,17 +37,21 @@ public class AdminController {
     private String encryptPassword;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private HttpServletRequest httpServletRequest;
 
     public static final String CURRENT_ADMIN_SESSION = "currentAdminSession";
 
     @RequestMapping("/index")
-    @AdminPremission(produceType = "application/json")
-    @ResponseBody
-    public CommonRes index(){
-//        ModelAndView modelAndView = new ModelAndView("/admin/admin/index");
-//        return modelAndView;
-        return CommonRes.create(null);
+    @AdminPremission
+    public ModelAndView index(){
+        ModelAndView modelAndView = new ModelAndView("/admin/admin/index");
+        modelAndView.addObject("userCount",userService.countAllUser());
+        modelAndView.addObject("CONTROLLER_NAME","admin");
+        modelAndView.addObject("ACTION_NAME","index");
+        return modelAndView;
     }
 
     @RequestMapping("/loginpage")
