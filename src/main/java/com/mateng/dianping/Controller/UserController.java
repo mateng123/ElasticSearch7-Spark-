@@ -74,7 +74,7 @@ public class UserController {
         }
         UserModel registerModel = new UserModel();
         registerModel.setPassword(registerReq.getPassword());
-        registerModel.setTelphone(registerReq.getTelephone());
+        registerModel.setTelphone(registerReq.getTelphone());
         registerModel.setNickName(registerReq.getNickName());
         registerModel.setGender(registerReq.getGender());
 

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class RegisterReq {
 
     @NotBlank(message = "手机号不能为空")
-    private String telephone;
+    private String telphone;
 
     @NotBlank(message = "密码不能为空")
     private String password;
